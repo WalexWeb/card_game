@@ -5,7 +5,7 @@ services:
     build: ./server
     container_name: cardgame-server
     ports:
-      - "3001:3001"
+      - "3600:3600"
     environment:
       - NODE_ENV=production
     restart: unless-stopped
@@ -14,7 +14,7 @@ services:
     build: ./client
     container_name: cardgame-client
     ports:
-      - "4000:80"
+      - "8600:80"
     depends_on:
       - cardgame-server
     restart: unless-stopped
