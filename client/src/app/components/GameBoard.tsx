@@ -20,6 +20,17 @@ const LightbulbIcon = () => (
   </svg>
 );
 
+const TrophyIcon = () => (
+  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+    <path
+      fillRule="evenodd"
+      d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
 interface GameBoardProps {
   gameState: any;
   playerHand: any[];
@@ -29,6 +40,124 @@ interface GameBoardProps {
   onNextRound: () => Promise<void>;
   onResetGame: () => void;
 }
+
+// Компонент для отображения счета
+const ScoreDisplay = ({
+  gameState,
+  playerRole,
+}: {
+  gameState: any;
+  playerRole: string | null;
+}) => {
+  if (!gameState?.scores) return null;
+
+  const { words, meanings } = gameState.scores;
+  const isWordPlayer = playerRole === "word";
+  const isMeaningPlayer = playerRole === "meaning";
+
+  return (
+    <motion.div
+      className="mb-4 flex items-center justify-center gap-6"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+    >
+      {/* Счет молодежи */}
+      <div
+        className={`flex items-center gap-3 rounded-lg px-4 py-2 ${
+          isWordPlayer
+            ? "border-2 border-purple-300 bg-purple-100 shadow-md"
+            : "border border-purple-200 bg-purple-50"
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-3 rounded-full bg-purple-500"></div>
+          <span className="text-sm font-semibold text-purple-800">
+            Молодежь
+          </span>
+        </div>
+        <div
+          className={`text-lg font-bold ${
+            isWordPlayer ? "text-purple-700" : "text-purple-600"
+          }`}
+        >
+          {words}
+        </div>
+      </div>
+
+      {/* Разделитель */}
+      <div className="flex items-center gap-2 text-gray-400">
+        <TrophyIcon />
+        <span className="text-xs font-medium">VS</span>
+        <TrophyIcon />
+      </div>
+
+      {/* Счет олдскула */}
+      <div
+        className={`flex items-center gap-3 rounded-lg px-4 py-2 ${
+          isMeaningPlayer
+            ? "border-2 border-blue-300 bg-blue-100 shadow-md"
+            : "border border-blue-200 bg-blue-50"
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-3 rounded-full bg-blue-500"></div>
+          <span className="text-sm font-semibold text-blue-800">Олдскул</span>
+        </div>
+        <div
+          className={`text-lg font-bold ${
+            isMeaningPlayer ? "text-blue-700" : "text-blue-600"
+          }`}
+        >
+          {meanings}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// Компонент для отображения информации о раунде
+const RoundInfo = ({ gameState }: { gameState: any }) => {
+  if (!gameState) return null;
+
+  return (
+    <motion.div
+      className="mb-2 flex items-center gap-4 text-sm text-gray-600"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.3 }}
+    >
+      <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1">
+        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <span className="font-medium">Раунд {gameState.currentRound || 1}</span>
+      </div>
+
+      <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1">
+        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+          <path
+            fillRule="evenodd"
+            d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <span className="font-medium">
+          {gameState.players?.reduce(
+            (total: number, player: any) => total + (player.handSize || 0),
+            0,
+          ) || 0}{" "}
+          карт осталось
+        </span>
+      </div>
+    </motion.div>
+  );
+};
 
 export const GameBoard = ({
   gameState,
@@ -75,21 +204,38 @@ export const GameBoard = ({
 
   return (
     <div className="flex h-screen w-screen flex-col gap-2 overflow-hidden bg-linear-to-br from-amber-50 to-orange-100 p-4">
+      {/* Шапка с информацией о игре */}
+      <motion.header
+        className="flex shrink-0 flex-col items-center pt-2"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Отображение счета */}
+        <ScoreDisplay gameState={gameState} playerRole={playerRole} />
+
+        {/* Информация о раунде */}
+        <RoundInfo gameState={gameState} />
+      </motion.header>
+
       {/* Основное игровое поле */}
       <div className="grid min-h-0 flex-1 grid-rows-3 gap-1">
         {/* Игрок 1 - слова (вверху) */}
         {playerRole === "word" && (
           <motion.section
-            className="flex min-h-0 flex-col items-center pt-6"
+            className="flex min-h-0 flex-col items-center pt-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="text-md mb-4 flex items-center gap-2 rounded-full border border-purple-200 bg-white/90 px-3 py-1 font-bold text-purple-800 shadow-sm">
+            <div className="text-md mb-4 flex items-center gap-2 rounded-full border border-purple-200 bg-white/90 px-4 py-2 font-bold text-purple-800 shadow-sm">
               <SpeakerIcon />
-              Слова
+              <span>Ваши слова</span>
+              <span className="ml-2 text-xs font-normal text-purple-600">
+                ({playerHand.length} карт)
+              </span>
             </div>
-            <div className="flex h-full max-h-full flex-wrap items-start justify-center gap-2 px-1">
+            <div className="flex h-full max-h-full flex-wrap items-start justify-center gap-3 px-1">
               <AnimatePresence mode="popLayout">
                 {playerHand.map((card, index) => (
                   <motion.div
@@ -164,7 +310,7 @@ export const GameBoard = ({
                 className="flex shrink-0 flex-col items-center gap-2"
               >
                 <motion.div
-                  className={`mb-3 flex items-center gap-1 text-xl font-bold ${
+                  className={`mb-3 flex items-center gap-2 text-xl font-bold ${
                     gameState.result === "correct"
                       ? "text-green-600"
                       : "text-red-600"
@@ -185,7 +331,7 @@ export const GameBoard = ({
                           clipRule="evenodd"
                         />
                       </svg>
-                      Правильно!
+                      Правильно! +1 очко
                     </>
                   ) : (
                     <>
@@ -206,12 +352,12 @@ export const GameBoard = ({
                 </motion.div>
                 <motion.button
                   onClick={onNextRound}
-                  className="text-md mb-2 flex items-center gap-1 rounded-lg bg-linear-to-r from-orange-500 to-red-500 px-6 py-2 font-bold text-white shadow hover:scale-105 hover:shadow-md active:scale-95"
+                  className="text-md mb-2 flex items-center gap-2 rounded-lg bg-linear-to-r from-orange-500 to-red-500 px-6 py-2 font-bold text-white shadow hover:scale-105 hover:shadow-md active:scale-95"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <svg
-                    className="h-3 w-3"
+                    className="h-4 w-4"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -221,7 +367,7 @@ export const GameBoard = ({
                       clipRule="evenodd"
                     />
                   </svg>
-                  Далее
+                  Следующий раунд
                 </motion.button>
               </motion.div>
             )}
@@ -236,11 +382,14 @@ export const GameBoard = ({
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="text-md mb-1 flex items-center gap-2 rounded-full border border-blue-200 bg-white/90 px-3 py-1 font-bold text-blue-800 shadow-sm">
+            <div className="text-md mb-1 flex items-center gap-2 rounded-full border border-blue-200 bg-white/90 px-4 py-2 font-bold text-blue-800 shadow-sm">
               <LightbulbIcon />
-              Значения
+              <span>Ваши значения</span>
+              <span className="ml-2 text-xs font-normal text-blue-600">
+                ({playerHand.length} карт)
+              </span>
             </div>
-            <div className="mt-4 flex flex-wrap items-start justify-center gap-2 px-1">
+            <div className="mt-4 flex flex-wrap items-start justify-center gap-3 px-1">
               <AnimatePresence mode="popLayout">
                 {playerHand.map((card, index) => (
                   <motion.div
@@ -267,17 +416,24 @@ export const GameBoard = ({
 
       {/* Панель управления */}
       <motion.footer
-        className="flex shrink-0 justify-center pt-1"
+        className="flex shrink-0 justify-center pt-4"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
         <motion.button
           onClick={onResetGame}
-          className="text-md flex items-center gap-1 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 px-4 py-2 font-bold text-white shadow hover:scale-105 hover:shadow-md active:scale-95"
+          className="flex items-center gap-2 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 px-6 py-3 font-bold text-white shadow hover:scale-105 hover:shadow-md active:scale-95"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fillRule="evenodd"
+              d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+              clipRule="evenodd"
+            />
+          </svg>
           Новая игра
         </motion.button>
       </motion.footer>
