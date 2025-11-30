@@ -1,4 +1,9 @@
 import { motion } from "framer-motion";
+import ConnectionIcon from "./ui/icons/ConnectionIcon";
+import DisconnectionIcon from "./ui/icons/DisconnectionIcon";
+import UserIcon from "./ui/icons/UserIcon";
+import YouthIcon from "./ui/icons/YouthIcon";
+import OldschoolIcon from "./ui/icons/OldschoolIcon";
 
 interface RoleSelectionProps {
   isConnected: boolean;
@@ -6,41 +11,6 @@ interface RoleSelectionProps {
   onPlayerNameChange: (name: string) => void;
   onRoleSelect: (role: "word" | "meaning") => void;
 }
-
-// Иконки для ролей
-const YouthIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M21,6H3C1.9,6 1,6.9 1,8V16C1,17.1 1.9,18 3,18H21C22.1,18 23,17.1 23,16V8C23,6.9 22.1,6 21,6M21,16H3V8H21V16M6,15H8V13H10V11H8V9H6V11H4V13H6V15M18,12C18.55,12 19,11.55 19,11C19,10.45 18.55,10 18,10C17.45,10 17,10.45 17,11C17,11.55 17.45,12 18,12M15,15C15.55,15 16,14.55 16,14C16,13.45 15.55,13 15,13C14.45,13 14,13.45 14,14C14,14.55 14.45,15 15,15M18,13C18.55,13 19,12.55 19,12C19,11.45 18.55,11 18,11C17.45,11 17,11.45 17,12C17,12.55 17.45,13 18,13Z" />
-  </svg>
-);
-
-const OldschoolIcon = () => (
-  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 17.18 8 16 12 16C16 16 19 17.18 19 17.18V13.18C19 13.18 16 14 12 14C8 14 5 13.18 5 13.18Z" />
-  </svg>
-);
-
-const ConnectionIcon = () => (
-  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
-  </svg>
-);
-
-const DisconnectionIcon = () => (
-  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M13.5,7H10.5L9.92,9L10.5,11H13.5L14.08,9L13.5,7M1.5,7V9H3.5V15H1.5V17H6.5V15H4.5V9H6.5V7H1.5M10.5,15V17H13.5V15H10.5M18.5,7V9H20.5V15H18.5V17H23.5V15H21.5V9H23.5V7H18.5Z" />
-  </svg>
-);
-
-const UserIcon = () => (
-  <svg
-    className="h-5 w-5 text-gray-400"
-    fill="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
-  </svg>
-);
 
 export const RoleSelection = ({
   isConnected,

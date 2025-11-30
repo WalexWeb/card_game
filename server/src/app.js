@@ -39,12 +39,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Card Game API!");
 });
 
-app.get("/health", (req, res) => {
-  console.log("Health check received");
-  res.json({ status: "OK", message: "Server is running" });
-});
-
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8600;
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

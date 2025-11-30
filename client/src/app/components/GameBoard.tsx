@@ -1,35 +1,13 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { WordCard } from "./WordCard";
-import { MeaningCard } from "./MeaningCard";
+import { WordCard } from "./ui/WordCard";
+import { MeaningCard } from "./ui/MeaningCard";
 import { GameResults } from "./GameResults";
-
-// SVG иконки
-const SpeakerIcon = () => (
-  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-    <path
-      fillRule="evenodd"
-      d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.784L4.727 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.727l3.656-3.784a1 1 0 011.617.784zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828a1 1 0 010-1.415z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
-
-const LightbulbIcon = () => (
-  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-    <path d="M10 1a6 6 0 00-3.815 10.631C7.237 12.5 8 13.443 8 14.456v.644a.75.75 0 00.572.729 6.016 6.016 0 002.856 0A.75.75 0 0012 15.1v-.644c0-1.013.762-1.957 1.815-2.825A6 6 0 0010 1zM8.5 16.9a.75.75 0 00-1.5 0v.1a2 2 0 104 0v-.1a.75.75 0 00-1.5 0v.1a.5.5 0 11-1 0v-.1z" />
-  </svg>
-);
-
-const TrophyIcon = () => (
-  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-    <path
-      fillRule="evenodd"
-      d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
+import SpeakerIcon from "./ui/icons/SpeakerIcon";
+import LightbulbIcon from "./ui/icons/LightbulbIcon";
+import RoundInfo from "./ui/RoundInfo";
+import { boardAnimation } from "./ui/animations/boardAnimation";
+import { cardAnimation } from "./ui/animations/cardAnimation";
+import ScoreDisplay from "./ui/ScoreDisplay";
 
 interface GameBoardProps {
   gameState: any;
@@ -41,124 +19,6 @@ interface GameBoardProps {
   onResetGame: () => void;
 }
 
-// Компонент для отображения счета
-const ScoreDisplay = ({
-  gameState,
-  playerRole,
-}: {
-  gameState: any;
-  playerRole: string | null;
-}) => {
-  if (!gameState?.scores) return null;
-
-  const { words, meanings } = gameState.scores;
-  const isWordPlayer = playerRole === "word";
-  const isMeaningPlayer = playerRole === "meaning";
-
-  return (
-    <motion.div
-      className="mb-4 flex items-center justify-center gap-6"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-    >
-      {/* Счет молодежи */}
-      <div
-        className={`flex items-center gap-3 rounded-lg px-4 py-2 ${
-          isWordPlayer
-            ? "border-2 border-purple-300 bg-purple-100 shadow-md"
-            : "border border-purple-200 bg-purple-50"
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-purple-500"></div>
-          <span className="text-sm font-semibold text-purple-800">
-            Молодежь
-          </span>
-        </div>
-        <div
-          className={`text-lg font-bold ${
-            isWordPlayer ? "text-purple-700" : "text-purple-600"
-          }`}
-        >
-          {words}
-        </div>
-      </div>
-
-      {/* Разделитель */}
-      <div className="flex items-center gap-2 text-gray-400">
-        <TrophyIcon />
-        <span className="text-xs font-medium">VS</span>
-        <TrophyIcon />
-      </div>
-
-      {/* Счет олдскула */}
-      <div
-        className={`flex items-center gap-3 rounded-lg px-4 py-2 ${
-          isMeaningPlayer
-            ? "border-2 border-blue-300 bg-blue-100 shadow-md"
-            : "border border-blue-200 bg-blue-50"
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-blue-500"></div>
-          <span className="text-sm font-semibold text-blue-800">Олдскул</span>
-        </div>
-        <div
-          className={`text-lg font-bold ${
-            isMeaningPlayer ? "text-blue-700" : "text-blue-600"
-          }`}
-        >
-          {meanings}
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Компонент для отображения информации о раунде
-const RoundInfo = ({ gameState }: { gameState: any }) => {
-  if (!gameState) return null;
-
-  return (
-    <motion.div
-      className="mb-2 flex items-center gap-4 text-sm text-gray-600"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.3 }}
-    >
-      <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1">
-        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-            clipRule="evenodd"
-          />
-        </svg>
-        <span className="font-medium">Раунд {gameState.currentRound || 1}</span>
-      </div>
-
-      <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1">
-        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-          <path
-            fillRule="evenodd"
-            d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-            clipRule="evenodd"
-          />
-        </svg>
-        <span className="font-medium">
-          {gameState.players?.reduce(
-            (total: number, player: any) => total + (player.handSize || 0),
-            0,
-          ) || 0}{" "}
-          карт осталось
-        </span>
-      </div>
-    </motion.div>
-  );
-};
-
 export const GameBoard = ({
   gameState,
   playerHand,
@@ -168,21 +28,6 @@ export const GameBoard = ({
   onNextRound,
   onResetGame,
 }: GameBoardProps) => {
-  // Анимации для карточек
-  const cardAnimation = {
-    initial: { opacity: 0, y: 20, scale: 0.9 },
-    animate: { opacity: 1, y: 0, scale: 1 },
-    exit: { opacity: 0, y: -10, scale: 0.9 },
-    transition: { type: "spring" as const, stiffness: 300, damping: 20 },
-  };
-
-  const boardAnimation = {
-    initial: { opacity: 0, scale: 0.8, y: 10 },
-    animate: { opacity: 1, scale: 1, y: 0 },
-    exit: { opacity: 0, scale: 0.8, y: -10 },
-    transition: { type: "spring" as const, stiffness: 250, damping: 15 },
-  };
-
   const handleWordSelect = (card: any) => {
     onSelectWord(card.id);
   };
