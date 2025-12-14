@@ -89,7 +89,6 @@ export class Game {
     const fullCard = this.deck.find((c) => c.id === cardId);
     if (!fullCard) return null;
     this.activeWord = fullCard;
-    player.hand = player.hand.filter((c) => c.id !== cardId);
     return fullCard;
   }
 
@@ -101,11 +100,26 @@ export class Game {
     if (!player) return null;
     const card = player.hand.find((c) => c.id === cardId);
     if (!card) return null;
+
     this.selectedMeaning = card;
-    this.result = this.activeWord.id === cardId ? "correct" : "wrong";
-    if (this.result === "correct") this.scores.meanings += 1;
-    else this.scores.words += 1;
-    player.hand = player.hand.filter((c) => c.id !== cardId);
+    const isCorrect = this.activeWord.id === cardId;
+    this.result = isCorrect ? "correct" : "wrong";
+
+    if (isCorrect) {
+      // Правильный ответ
+      this.scores.meanings += 1;
+
+      player.hand = player.hand.filter((c) => c.id !== cardId);
+
+      const wordPlayer = this.players.find((p) => p.role === "word");
+      if (wordPlayer) {
+        wordPlayer.hand = wordPlayer.hand.filter((c) => c.id !== cardId);
+      }
+    } else {
+      // Неправильный ответ
+      this.scores.words += 1;
+    }
+
     return { card, result: this.result, scores: { ...this.scores } };
   }
 
@@ -148,6 +162,7 @@ export class Game {
         isReady: player.isReady,
       })),
       activeWord: this.activeWord,
+      selectedMeaning: this.selectedMeaning,
       result: this.result,
       scores: { ...this.scores },
       currentRound: this.currentRound,

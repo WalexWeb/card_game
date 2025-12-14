@@ -8,6 +8,6 @@ RUN npm ci
 
 COPY . .
 
-EXPOSE 3001
+EXPOSE 8600
 
 CMD ["node", "src/app.js"]
